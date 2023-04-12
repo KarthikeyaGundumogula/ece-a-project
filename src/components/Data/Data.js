@@ -46,7 +46,7 @@ const Data = () => {
       .catch((error) => {
         console.error(error);
       });
-  }, []);
+  }, [data]);
 
   function convertToCSV(data) {
     const rows = [];
