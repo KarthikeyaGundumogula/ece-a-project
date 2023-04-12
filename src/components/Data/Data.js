@@ -37,8 +37,6 @@ const Data = () => {
       .then((snapshot) => {
         if (snapshot.exists()) {
           setData(snapshot.val());
-          console.log(snapshot.val());
-          console.log(data);
         } else {
           console.log("No data available");
         }
@@ -120,7 +118,7 @@ const Data = () => {
           <Tbody>
             {Object.keys(data).map((key) => {
               return (
-                <Tr>
+                <Tr key={key}>
                   <Td>{data[key]["Bus No"]}</Td>
                   <Td>
                     <Badge
