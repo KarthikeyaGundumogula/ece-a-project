@@ -6,22 +6,20 @@ import {
   Th,
   Td,
   TableContainer,
-  Tfoot,
   Button,
   Center,
 } from "@chakra-ui/react";
-
 import { initializeApp } from "firebase/app";
-import { getDatabase, ref, child, get } from "firebase/database";
+import { getDatabase, ref, get, child } from "firebase/database";
 const firebaseConfig = {
-  apiKey: "AIzaSyArY3o16sAFHluJ3jU81kbE6tZNoNO-R60",
-  authDomain: "demo1-6b4f0.firebaseapp.com",
-  databaseURL:
-    "https://demo1-6b4f0-default-rtdb.asia-southeast1.firebasedatabase.app",
-  projectId: "demo1-6b4f0",
-  storageBucket: "demo1-6b4f0.appspot.com",
-  messagingSenderId: "307803330427",
-  appId: "1:307803330427:web:799a09cd95ca79eb610fde",
+  apiKey: "AIzaSyAhj_xf6z6VIbWFxvq9FfUgh3BL5JbCpgU",
+  authDomain: "rfid-4ddc6.firebaseapp.com",
+  databaseURL: "https://rfid-4ddc6-default-rtdb.firebaseio.com",
+  projectId: "rfid-4ddc6",
+  storageBucket: "rfid-4ddc6.appspot.com",
+  messagingSenderId: "596055244887",
+  appId: "1:596055244887:web:7b61f8e3af8e720139e312",
+  measurementId: "G-JRZ19F2XJ5",
 };
 
 const app = initializeApp(firebaseConfig);
@@ -45,18 +43,18 @@ const Data = () => {
         console.error(error);
       });
   });
-
   function convertToCSV(data) {
     const rows = [];
-    const header = Object.keys(data[0]);
+    let header = Object.keys(data[0]);
 
-    rows.push(header.join(","));
+    rows.push(["Bus NO", "Date", "Time"].join(","));
 
     data.forEach((item) => {
       const values = header.map((key) => {
         const value = item[key];
-        if (typeof value === "object" && value !== null) {
-          // If the value is an object, serialize it to a JSON string
+        if (typeof value === "string") {
+          return value.split("_").join(",");
+        } else if (typeof value === "object" && value !== null) {
           return JSON.stringify(value);
         } else {
           return value;
@@ -89,13 +87,13 @@ const Data = () => {
   }
   const handleDownload = () => {
     const dataArray = Object.keys(data).map((key) => {
-      const record = data[key];
-      return { ...record, key };
+      const record = data[key].split("_");
+      return { ...record };
     });
 
     // Convert the data array to CSV format
     const csv = convertToCSV(dataArray);
-    downloadCSV(csv, "mydata.csv");
+    downloadCSV(csv, "report.csv");
   };
 
   return (
@@ -111,24 +109,21 @@ const Data = () => {
             <Tr>
               <Th>Bus No.</Th>
               <Th>Status</Th>
-              <Th>CheckIn/Out Date </Th>
-              <Th>CheckIN/Out Time</Th>
+              <Th>CheckIn Date </Th>
+              <Th>CheckIN Time</Th>
             </Tr>
           </Thead>
           <Tbody>
             {Object.keys(data).map((key) => {
+              const dataArray = data[key].split("_");
               return (
                 <Tr key={key}>
-                  <Td>{data[key]["Bus No"]}</Td>
+                  <Td>{dataArray[0]}</Td>
                   <Td>
-                    <Badge
-                      colorScheme={data[key].Status === true ? "green" : "red"}
-                    >
-                      {data[key].Status === true ? "CheckIn" : "CheckOut"}
-                    </Badge>
+                    <Badge colorScheme={"green"}>CheckIn</Badge>
                   </Td>
-                  <Td>{data[key].Date}</Td>
-                  <Td>{data[key].Time}</Td>
+                  <Td>{dataArray[1]}</Td>
+                  <Td>{dataArray[2]}</Td>
                 </Tr>
               );
             })}
