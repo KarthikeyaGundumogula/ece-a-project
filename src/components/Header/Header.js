@@ -2,6 +2,7 @@ import title from "./title.png";
 import Image from "next/image";
 
 const Header = () => {
+  
   return (
     <div>
       <Image
